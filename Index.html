@@ -65,6 +65,7 @@
       </select>
 
       <button id="submit">Filter</button>
+      <button id="duplicate">duplicate</button>
     </div>
     <table border="1px">
       <thead>
@@ -85,6 +86,7 @@
 
     <script>
       const submit = document.getElementById("submit");
+      const duplicate = document.getElementById("duplicate");
       const all = document.getElementById("all");
 
       const meritfilter = document.getElementById("meritfilter");
@@ -98,7 +100,8 @@
       var getmeritvalue = [];
       var getconditioninmerit = [];
       var getstudenttype = [];
-
+      var arrayforphonenumber = [];
+      var duplicatebol = false;
       const Tablebody = document.getElementById("myTablebody");
       const clearTable = () => {
         Tablebody.innerHTML = "";
@@ -106,12 +109,17 @@
       console.log(data);
       var newarray = [];
       var oldarray = [data.department_data];
+
+      let duplicatesnumber = [];
       var getidof12th = [];
       var alldatasetinstudentid = [];
 
-      const filterTable = () => {
+      const modify_data = () => {
         newarray.splice(0, newarray.length);
         oldarray.splice(0, oldarray.length);
+        // duplicatesnumber.splice(0, duplicatesnumber.length);
+     
+
         const tableRows = data.department_data.forEach((departmentitem) => {
           const dep_head = departmentitem.dep_head;
           const department = departmentitem.department;
@@ -126,6 +134,18 @@
             const year_head = years.year_head;
 
             years.student_data.forEach((student) => {
+              
+              if (duplicatebol) {
+                duplicatesnumber = arrayforphonenumber.filter(
+                  (number, index, array) => {
+                    // Check if the number appears two or more times
+                    return array.filter((num) => num === number).length >= 2;
+                  }
+                );
+              }
+              // console.log("duplicatesnumber",duplicatesnumber);
+              // console.log("arrayforphonenumber",arrayforphonenumber);
+
               if (
                 (getgendervalue.length === 0 || getgendervalue.includes("")
                   ? true
@@ -139,21 +159,29 @@
                   : getyearvalue.includes(year)) &&
                 (getmeritvalue
                   ? getconditioninmerit === "lessthan"
-                    ? getmeritvalue > student.merit_12th
+                    ? getmeritvalue > student.merit_12th ||
+                      getmeritvalue > student.merit_deploma
                     : true
                   : true) &&
                 (getmeritvalue
                   ? getconditioninmerit === "greaterthan"
-                    ? getmeritvalue < student.merit_12th
+                    ? getmeritvalue < student.merit_12th ||
+                      getmeritvalue < student.merit_deploma
                     : true
                   : true) &&
                 (getstudenttype.length === 0 || getstudenttype.includes("")
                   ? true
                   : Object.keys(student).some((e) =>
                       getstudenttype.includes(e)
-                    ))
+                    )) &&
+                (duplicatebol
+                  ? duplicatesnumber.includes(student.contact_number)
+                  : true)
               ) {
                 /// store value in oldarray
+                const meritaddValue = student.hasOwnProperty("merit_12th")
+                  ? "merit_12th"
+                  : "merit_diploma";
                 const studentData = {
                   id: student.id,
                   student_name: student.student_name,
@@ -161,22 +189,20 @@
                   contact_number: student.contact_number,
                   email_id: student.email_id,
                   admission_year: student.admission_year,
-                  merit_12th: student.merit_12th,
                 };
+                studentData[meritaddValue] =
+                  student.merit_12th || student.merit_diploma;
                 yearData.student_data.push(studentData);
-                
-                if (!student.id) {
-                }
 
                 /// store value in newarray
                 newarray.push({
                   id: student.id,
-                  name: student.student_name,
-                  contact: student.contact_number,
-                  email: student.email_id,
+                  student_name: student.student_name,
+                  contact_number: student.contact_number,
+                  email_id: student.email_id,
                   admission_year: student.admission_year,
                   gender: student.gender,
-                  merit_12th: student.merit_12th,
+                  merit_12th: student.merit_12th || student.merit_diploma,
                   year: year,
                   year_head: year_head,
                   dep_head: dep_head,
@@ -203,64 +229,61 @@
         });
       };
 
-      const oldarrayfiltertable = () => {
-        oldarray.forEach((departmentitem) => {
-          const dep_head = departmentitem.dep_head;
-          const department = departmentitem.department;
+      const printtable = () => {
+        arrayforphonenumber = [];
+        newarray.forEach((student) => {
+          arrayforphonenumber.push(student.contact_number);
+          const row = document.createElement("tr");
+          const cell5 = document.createElement("td");
+          cell5.textContent = student.id;
+          const cell6 = document.createElement("td");
+          cell6.textContent = student.student_name;
+          const cell7 = document.createElement("td");
+          cell7.textContent = student.gender;
+          const cell8 = document.createElement("td");
+          cell8.textContent = student.contact_number;
+          const cell9 = document.createElement("td");
+          cell9.textContent = student.email_id;
+          const cell10 = document.createElement("td");
+          cell10.textContent = student.admission_year;
+          const cell11 = document.createElement("td");
+          cell11.textContent = student.merit_12th || student.merit_diploma;
+          const cell1 = document.createElement("td");
+          cell1.textContent = student.year;
+          const cell2 = document.createElement("td");
+          cell2.textContent = student.department;
+          const cell3 = document.createElement("td");
+          cell3.textContent = student.dep_head;
+          const cell4 = document.createElement("td");
+          cell4.textContent = student.year_head;
 
-          departmentitem.year?.forEach((years) => {
-            const yearData = {
-              year: years.year,
-              year_head: years.year_head,
-              student_data: [],
-            };
-            const year = years.year;
-            const year_head = years.year_head;
-            years.student_data.forEach((student) => {
-              const row = document.createElement("tr");
-              const cell5 = document.createElement("td");
-              cell5.textContent = student.id;
-              const cell6 = document.createElement("td");
-              cell6.textContent = student.student_name;
-              const cell7 = document.createElement("td");
-              cell7.textContent = student.gender;
-              const cell8 = document.createElement("td");
-              cell8.textContent = student.contact_number;
-              const cell9 = document.createElement("td");
-              cell9.textContent = student.email_id;
-              const cell10 = document.createElement("td");
-              cell10.textContent = student.admission_year;
-              const cell11 = document.createElement("td");
-              cell11.textContent = student.merit_12th || student.merit_diploma;
-              const cell1 = document.createElement("td");
-              cell1.textContent = year;
-              const cell2 = document.createElement("td");
-              cell2.textContent = department;
-              const cell3 = document.createElement("td");
-              cell3.textContent = dep_head;
-              const cell4 = document.createElement("td");
-              cell4.textContent = year_head;
-
-              row.appendChild(cell5);
-              row.appendChild(cell6);
-              row.appendChild(cell7);
-              row.appendChild(cell8);
-              row.appendChild(cell9);
-              row.appendChild(cell10);
-              row.appendChild(cell11);
-              row.appendChild(cell1);
-              row.appendChild(cell2);
-              row.appendChild(cell3);
-              row.appendChild(cell4);
-              Tablebody.appendChild(row);
-            });
-          });
+          row.appendChild(cell5);
+          row.appendChild(cell6);
+          row.appendChild(cell7);
+          row.appendChild(cell8);
+          row.appendChild(cell9);
+          row.appendChild(cell10);
+          row.appendChild(cell11);
+          row.appendChild(cell1);
+          row.appendChild(cell2);
+          row.appendChild(cell3);
+          row.appendChild(cell4);
+          Tablebody.appendChild(row);
         });
       };
-      filterTable();
+      modify_data();
       console.log(oldarray);
-      oldarrayfiltertable();
+      printtable();
+      duplicate.addEventListener("click", function () {
+        duplicatebol = true;
+        clearTable();
+        modify_data();
 
+        printtable();
+        console.log(newarray);
+        console.log(oldarray);
+        duplicatebol = false;
+      });
       submit.addEventListener("click", function () {
         getgendervalue = Array.from(gender.selectedOptions).map(
           (gender) => gender.value
@@ -279,13 +302,11 @@
 
         console.log(getgendervalue);
         clearTable();
-        filterTable();
+        modify_data();
 
-        oldarrayfiltertable();
+        printtable();
         console.log(newarray);
         console.log(oldarray);
-        // data.department_data.splice(0,data.department_data.length,oldarray);
-        // console.log(data);
       });
     </script>
   </body>
