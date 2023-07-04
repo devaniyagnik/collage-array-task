@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Table</title>
+    <script src="Api.js"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      .form {
+        padding: 10px;
+      }
+      table {
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="form">
+      <select name="gender" id="gender" multiple>
+        <option value="">Select</option>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+      </select>
+      <select name="department" id="department" multiple>
+        <option value="">Select</option>
+        <option value="Computer">Computer</option>
+        <option value="Automobile">Automobile</option>
+        <option value="Civil">Civil</option>
+      </select>
+      <select name="year" id="year" multiple>
+        <option value="">Select</option>
+        <option value="First">First</option>
+        <option value="Second">Second</option>
+        <option value="Third">Third</option>
+        <option value="Fourth">Fourth</option>
+        <option value="Pass Out">Pass Out</option>
+      </select>
+
+      <br /><br />
+      <input
+        type="number"
+        name="merit"
+        id="merit"
+        min="0"
+        max="99"
+        placeholder="merit"
+        required
+      />
+      <select name="conditioninmerit" id="conditioninmerit">
+        <option value="">Select</option>
+        <option value="lessthan">less than</option>
+        <option value="greaterthan">greater than</option>
+      </select>
+
+      <br /><br />
+      <select name="studenttype" id="studenttype" multiple>
+        <option value="">Select</option>
+        <option value="merit_12th">Regular</option>
+        <option value="merit_diploma">D2D</option>
+      </select>
+
+      <button id="submit">Filter</button>
+    </div>
+    <table border="1px">
+      <thead>
+        <th>id</th>
+        <th>student_name</th>
+        <th>gender</th>
+        <th>contact_number</th>
+        <th>email_id</th>
+        <th>admission_year</th>
+        <th>merit_12th</th>
+        <th>year</th>
+        <th>department</th>
+        <th>dep_head</th>
+        <th>year_head</th>
+      </thead>
+      <tbody id="myTablebody"></tbody>
+    </table>
+
+    <script>
+      const submit = document.getElementById("submit");
+      const all = document.getElementById("all");
+
+      const meritfilter = document.getElementById("meritfilter");
+      const dropdown = document.querySelector(".yeartype");
+      const studentfilter = document.getElementById("studentfilter");
+
+      var getallvalue = "All";
+      var getgendervalue = [];
+      var getyearvalue = [];
+      var getdepartmentvalue = [];
+      var getmeritvalue = [];
+      var getconditioninmerit = [];
+      var getstudenttype = [];
+
+      const Tablebody = document.getElementById("myTablebody");
+      const clearTable = () => {
+        Tablebody.innerHTML = "";
+      };
+      console.log(data);
+      var newarray = [];
+      var oldarray = [data.department_data];
+      var getidof12th = [];
+      var alldatasetinstudentid = [];
+
+      const filterTable = () => {
+        newarray.splice(0, newarray.length);
+        oldarray.splice(0, oldarray.length);
+        const tableRows = data.department_data.forEach((departmentitem) => {
+          const dep_head = departmentitem.dep_head;
+          const department = departmentitem.department;
+
+          departmentitem.year?.forEach((years) => {
+            const yearData = {
+              year: years.year,
+              year_head: years.year_head,
+              student_data: [],
+            };
+            const year = years.year;
+            const year_head = years.year_head;
+
+            years.student_data.forEach((student) => {
+              if (
+                (getgendervalue.length === 0 || getgendervalue.includes("")
+                  ? true
+                  : getgendervalue.includes(student.gender)) &&
+                (getdepartmentvalue.length === 0 ||
+                getdepartmentvalue.includes("")
+                  ? true
+                  : getdepartmentvalue.includes(department)) &&
+                (getyearvalue.length === 0 || getyearvalue.includes("")
+                  ? true
+                  : getyearvalue.includes(year)) &&
+                (getmeritvalue
+                  ? getconditioninmerit === "lessthan"
+                    ? getmeritvalue > student.merit_12th
+                    : true
+                  : true) &&
+                (getmeritvalue
+                  ? getconditioninmerit === "greaterthan"
+                    ? getmeritvalue < student.merit_12th
+                    : true
+                  : true) &&
+                (getstudenttype.length === 0 || getstudenttype.includes("")
+                  ? true
+                  : Object.keys(student).some((e) =>
+                      getstudenttype.includes(e)
+                    ))
+              ) {
+                /// store value in oldarray
+                const studentData = {
+                  id: student.id,
+                  student_name: student.student_name,
+                  gender: student.gender,
+                  contact_number: student.contact_number,
+                  email_id: student.email_id,
+                  admission_year: student.admission_year,
+                  merit_12th: student.merit_12th,
+                };
+                yearData.student_data.push(studentData);
+                
+                if (!student.id) {
+                }
+
+                /// store value in newarray
+                newarray.push({
+                  id: student.id,
+                  name: student.student_name,
+                  contact: student.contact_number,
+                  email: student.email_id,
+                  admission_year: student.admission_year,
+                  gender: student.gender,
+                  merit_12th: student.merit_12th,
+                  year: year,
+                  year_head: year_head,
+                  dep_head: dep_head,
+                  department: department,
+                });
+              }
+            });
+            if (yearData.student_data.length > 0) {
+              const departmentIndex = oldarray.findIndex(
+                (item) => item.department === department
+              );
+
+              if (departmentIndex === -1) {
+                oldarray.push({
+                  department: department,
+                  dep_head: departmentitem.dep_head,
+                  year: [yearData],
+                });
+              } else {
+                oldarray[departmentIndex].year.push(yearData);
+              }
+            }
+          });
+        });
+      };
+
+      const oldarrayfiltertable = () => {
+        oldarray.forEach((departmentitem) => {
+          const dep_head = departmentitem.dep_head;
+          const department = departmentitem.department;
+
+          departmentitem.year?.forEach((years) => {
+            const yearData = {
+              year: years.year,
+              year_head: years.year_head,
+              student_data: [],
+            };
+            const year = years.year;
+            const year_head = years.year_head;
+            years.student_data.forEach((student) => {
+              const row = document.createElement("tr");
+              const cell5 = document.createElement("td");
+              cell5.textContent = student.id;
+              const cell6 = document.createElement("td");
+              cell6.textContent = student.student_name;
+              const cell7 = document.createElement("td");
+              cell7.textContent = student.gender;
+              const cell8 = document.createElement("td");
+              cell8.textContent = student.contact_number;
+              const cell9 = document.createElement("td");
+              cell9.textContent = student.email_id;
+              const cell10 = document.createElement("td");
+              cell10.textContent = student.admission_year;
+              const cell11 = document.createElement("td");
+              cell11.textContent = student.merit_12th || student.merit_diploma;
+              const cell1 = document.createElement("td");
+              cell1.textContent = year;
+              const cell2 = document.createElement("td");
+              cell2.textContent = department;
+              const cell3 = document.createElement("td");
+              cell3.textContent = dep_head;
+              const cell4 = document.createElement("td");
+              cell4.textContent = year_head;
+
+              row.appendChild(cell5);
+              row.appendChild(cell6);
+              row.appendChild(cell7);
+              row.appendChild(cell8);
+              row.appendChild(cell9);
+              row.appendChild(cell10);
+              row.appendChild(cell11);
+              row.appendChild(cell1);
+              row.appendChild(cell2);
+              row.appendChild(cell3);
+              row.appendChild(cell4);
+              Tablebody.appendChild(row);
+            });
+          });
+        });
+      };
+      filterTable();
+      console.log(oldarray);
+      oldarrayfiltertable();
+
+      submit.addEventListener("click", function () {
+        getgendervalue = Array.from(gender.selectedOptions).map(
+          (gender) => gender.value
+        );
+        getdepartmentvalue = Array.from(department.selectedOptions).map(
+          (department) => department.value
+        );
+        getyearvalue = Array.from(year.selectedOptions).map(
+          (year) => year.value
+        );
+        getstudenttype = Array.from(studenttype.selectedOptions).map(
+          (studenttype) => studenttype.value
+        );
+        getmeritvalue = merit.value;
+        getconditioninmerit = conditioninmerit.value;
+
+        console.log(getgendervalue);
+        clearTable();
+        filterTable();
+
+        oldarrayfiltertable();
+        console.log(newarray);
+        console.log(oldarray);
+        // data.department_data.splice(0,data.department_data.length,oldarray);
+        // console.log(data);
+      });
+    </script>
+  </body>
+</html>
