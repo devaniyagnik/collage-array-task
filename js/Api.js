@@ -1111,6 +1111,7 @@ let data = {
   ],
 };
 
+// add unique id all fields
 data.department_data.map((departmentitem) => {
   const dep_head = departmentitem.dep_head;
   const department = departmentitem.department;
@@ -1122,22 +1123,19 @@ data.department_data.map((departmentitem) => {
     const year_head = years.year_head;
     years.student_data.forEach((students) => {
       if (Object.keys(students).some((e) => e.includes("merit_12th"))) {
-       
         arraylistofmerit12th.push(
-          parseInt(students.id.charAt(students.id.length -1))
+          parseInt(students.id.charAt(students.id.length - 1))
         );
         if (!students.id) {
-          // arraylistofmerit12th.forEach((e) => {});
-          // console.log(arraylistofmerit12th);
-          
-            for (var i = 1; i <= arraylistofmerit12th.length+1; i++) {
-              if (!arraylistofmerit12th.includes(i)) {
-                students.id = `${students.admission_year}_${i}`;
-                let nanIndex = arraylistofmerit12th.findIndex(value => isNaN(value));
-                arraylistofmerit12th[nanIndex] = i; 
-                // console.log(arraylistofmerit12th);
-              }
+          for (var i = 1; i <= arraylistofmerit12th.length + 1; i++) {
+            if (!arraylistofmerit12th.includes(i)) {
+              students.id = `${students.admission_year}_${i}`;
+              let nanIndex = arraylistofmerit12th.findIndex((value) =>
+                isNaN(value)
+              );
+              arraylistofmerit12th[nanIndex] = i;
             }
+          }
         }
       } else if (
         Object.keys(students).some((e) => e.includes("merit_diploma"))
@@ -1156,4 +1154,3 @@ data.department_data.map((departmentitem) => {
     });
   });
 });
-

@@ -10,8 +10,8 @@
       integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
       crossorigin="anonymous"
     />
+    <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
     <script src="./js/Api.js"></script>
-    <!-- // stylehi  --> 
     <style>
       * {
         margin: 0;
@@ -24,11 +24,15 @@
       table {
         width: 100%;
       }
+      button{
+        padding: 5px 10px;
+      }
     </style>
   </head>
   <body>
     <div class="fluid-container">
       <div class="form">
+        <!-- Filter options -->
         <select name="gender" id="gender" multiple>
           <option value="">Select</option>
           <option value="Male">Male</option>
@@ -48,8 +52,7 @@
           <option value="Fourth">Fourth</option>
           <option value="Pass Out">Pass Out</option>
         </select>
-
-        <br /><br />
+        <!-- Input and select elements for filtering conditions -->
         <input
           type="number"
           name="merit"
@@ -60,32 +63,42 @@
           required
         />
         <select name="conditioninmerit" id="conditioninmerit">
-          <option value="">Select</option>
           <option value="lessthan">less than</option>
           <option value="greaterthan">greater than</option>
         </select>
 
-        <br /><br />
+        <!-- Select element for student type filtering -->
         <select name="studenttype" id="studenttype" multiple>
           <option value="">Select</option>
           <option value="merit_12th">Regular</option>
           <option value="merit_diploma">D2D</option>
         </select>
 
+        <!-- Buttons for filter, duplicate, sorting -->
         <button id="submit">Filter</button>
         <button id="duplicate">duplicate</button>
         <button id="sorting">sorting</button>
         <br /><br />
 
-        <select name="meritsortingtype" id="meritsortingtype" multiple>
-          <option value="">Select</option>
+        <!-- Select element for sorting options -->
+        <select name="meritsortingtype" id="meritsortingtype">
           <option value="ascending">ascending order</option>
           <option value="descending">descending order</option>
         </select>
+
+        <!-- Buttons for filter, duplicate, sorting, reset, and download -->
         <button id="sortingonmerit">sort in merit</button>
         <button id="reset">reset</button>
+
+        <!-- Select element for download filter data -->
+        <select name="downloadfiletype" id="downloadfiletype">
+          <option value="">Select</option>
+          <option value="csv">csv</option>
+          <option value="excel">Excel</option>
+        </select>
         <button id="download">Download</button>
       </div>
+      <!-- Table to display the data -->
       <table border="1px">
         <thead>
           <th>id</th>
@@ -105,6 +118,7 @@
     </div>
 
     <script>
+      // decarations of variables for action on btn click
       const submit = document.getElementById("submit");
       const duplicate = document.getElementById("duplicate");
       const download = document.getElementById("download");
@@ -112,11 +126,12 @@
       const reset = document.getElementById("reset");
       const sortingonmerit = document.getElementById("sortingonmerit");
       const all = document.getElementById("all");
-
       const meritfilter = document.getElementById("meritfilter");
       const dropdown = document.querySelector(".yeartype");
       const studentfilter = document.getElementById("studentfilter");
+      const Tablebody = document.getElementById("myTablebody");
 
+      // decarations of variables for actions
       var getallvalue = "All";
       var getmeritsortvalue = "All";
       var resetbul = "";
@@ -124,31 +139,33 @@
       var getyearvalue = [];
       var getdepartmentvalue = [];
       var getmeritvalue = [];
-      var getconditioninmerit = [];
+      var getconditioninmerit = "";
       var getstudenttype = [];
       var arrayforphonenumber = [];
       var duplicatebol = false;
-      const Tablebody = document.getElementById("myTablebody");
-      const clearTable = () => {
-        Tablebody.innerHTML = "";
-      };
-      console.log(data);
       var newarray = [];
       var oldarray = [data.department_data];
-
       let duplicatesnumber = [];
       var getidof12th = [];
       var alldatasetinstudentid = [];
 
+      // clear data from table function
+      const clearTable = () => {
+        Tablebody.innerHTML = "";
+      };
+
+      // Modified and filtered data function
       const modify_data = () => {
         newarray.splice(0, newarray.length);
         oldarray.splice(0, oldarray.length);
 
         const tableRows = data.department_data.forEach((departmentitem) => {
+          // get department data store in variable
           const dep_head = departmentitem.dep_head;
           const department = departmentitem.department;
 
           departmentitem.year?.forEach((years) => {
+            // get year data store in variable
             const yearData = {
               year: years.year,
               year_head: years.year_head,
@@ -158,6 +175,7 @@
             const year_head = years.year_head;
 
             years.student_data.forEach((student) => {
+              // if codtion for only if click dublicate button so filter by contact number duplicate
               if (duplicatebol) {
                 duplicatesnumber = arrayforphonenumber.filter(
                   (number, index, array) => {
@@ -166,6 +184,7 @@
                 );
               }
 
+              //all conditions for get data filter and duplicate
               if (
                 (getgendervalue.length === 0 || getgendervalue.includes("")
                   ? true
@@ -230,6 +249,7 @@
                 });
               }
             });
+            // for making duplicate object like data structure
             if (yearData.student_data.length > 0) {
               const departmentIndex = oldarray.findIndex(
                 (item) => item.department === department
@@ -248,7 +268,8 @@
           });
         });
       };
-      //hi
+
+      // print table of data
 
       const printtable = () => {
         arrayforphonenumber = [];
@@ -293,20 +314,24 @@
           Tablebody.appendChild(row);
         });
       };
+
+      // first time run every time
       modify_data();
       console.log(oldarray);
       printtable();
+
+      // duplicate btn functionality like duplicate contact number filter
       duplicate.addEventListener("click", function () {
         duplicatebol = true;
         clearTable();
         modify_data();
-
         printtable();
         console.log(newarray);
         console.log(oldarray);
         duplicatebol = false;
       });
 
+      // reset btn functionality like reset all input fields
       reset.addEventListener("click", function () {
         getallvalue = "All";
         getmeritsortvalue = "All";
@@ -315,7 +340,7 @@
         getyearvalue = [];
         getdepartmentvalue = [];
         getmeritvalue = [];
-        getconditioninmerit = [];
+        getconditioninmerit = "";
         getstudenttype = [];
         arrayforphonenumber = [];
         duplicatebol = false;
@@ -324,11 +349,12 @@
         year.value = year.defaultSelected;
         merit.value = merit.defaultSelected;
         studenttype.value = studenttype.defaultSelected;
-        conditioninmerit.value = conditioninmerit.defaultSelected;
+        conditioninmerit.value = "lessthan";
         clearTable();
         modify_data();
         printtable();
       });
+      // sorting btn functionality like sorting on contact number
       sorting.addEventListener("click", function () {
         duplicatebol = true;
         clearTable();
@@ -339,21 +365,18 @@
         console.log(oldarray);
         duplicatebol = false;
       });
+      // sortingonmerit btn functionality like sorting on merit
       sortingonmerit.addEventListener("click", function () {
         getmeritsortvalue = Array.from(meritsortingtype.selectedOptions).map(
           (meritsortingtype) => meritsortingtype.value
         );
-        console.log(getmeritsortvalue);
-
         clearTable();
         modify_data();
-
         getmeritsortvalue
           ? getmeritsortvalue.includes("ascending")
             ? newarray.sort((a, b) => a.merit_12th - b.merit_12th)
             : true
           : true;
-
         getmeritsortvalue
           ? getmeritsortvalue.includes("descending")
             ? newarray.sort((a, b) => b.merit_12th - a.merit_12th)
@@ -363,37 +386,78 @@
         console.log(newarray);
         console.log(oldarray);
       });
+      // download btn functionality like csv or xlsx file download
       download.addEventListener("click", function () {
-        //define the heading for each row of the data
-        var csv =
-          "id,	student_name,	gender,	contact_number,	email_id,	admission_year,	merit_12th,	year,	department,	dep_head,	year_head\n"; // Add column headers
+        if (downloadfiletype.value === "csv") {
+          //convert newarray to csv format
+          var csv =
+            "id,	student_name,	gender,	contact_number,	email_id,	admission_year,	merit_12th,	year,	department,	dep_head,	year_head\n";
 
-        //merge the data with CSV
-        newarray.forEach(function (row) {
-          csv += row.id + ",";
-          csv += row.student_name + ",";
-          csv += row.gender + ",";
-          csv += row.contact_number + ",";
-          csv += row.email_id + ",";
-          csv += row.admission_year + ",";
-          csv += row.merit_12th + ",";
-          csv += row.year + ",";
-          csv += row.department + ",";
-          csv += row.dep_head + ",";
-          csv += row.year_head + "\n";
-        });
+          //merge the data with CSV
+          newarray.forEach(function (row) {
+            csv += row.id + ",";
+            csv += row.student_name + ",";
+            csv += row.gender + ",";
+            csv += row.contact_number + ",";
+            csv += row.email_id + ",";
+            csv += row.admission_year + ",";
+            csv += row.merit_12th + ",";
+            csv += row.year + ",";
+            csv += row.department + ",";
+            csv += row.dep_head + ",";
+            csv += row.year_head + "\n";
+          });
 
-        //display the created CSV data on the web browser
-        console.log(csv);
-
-        var hiddenElement = document.createElement("a");
-        hiddenElement.href = "data:text/csv;charset=utf-8," + encodeURI(csv);
-        hiddenElement.target = "_blank";
-
-        //provide the name for the CSV file to be downloaded
-        hiddenElement.download = "Filterdata.csv";
-        hiddenElement.click();
+          // Create a download link
+          var hiddenElement = document.createElement("a");
+          hiddenElement.href = "data:text/xlsx;charset=utf-8," + encodeURI(csv);
+          hiddenElement.target = "_blank";
+          hiddenElement.download = "Filterdata.csv";
+          hiddenElement.click();
+        } else if (downloadfiletype.value === "excel") {
+          //convert newarray to xlsx format
+          const headers = [
+            "id",
+            "student_name",
+            "gender",
+            "contact_number",
+            "email_id",
+            "admission_year",
+            "merit_12th",
+            "year",
+            "department",
+            "dep_head",
+            "year_head",
+          ];
+          const dataArray = [
+            headers,
+            ...newarray.map((obj) => Object.values(obj)),
+          ];
+          // Create a new worksheet
+          const workbook = XLSX.utils.book_new();
+          const worksheet = XLSX.utils.aoa_to_sheet(dataArray);
+          // Add the worksheet to the workbook
+          XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+          // Convert the workbook to binary XLSX data
+          const excelData = XLSX.write(workbook, {
+            bookType: "xlsx",
+            type: "array",
+          });
+          // Create a Blob object from the XLSX data
+          const blob = new Blob([excelData], {
+            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          });
+          // Create a download link
+          const link = document.createElement("a");
+          link.href = URL.createObjectURL(blob);
+          link.download = "filterdata.xlsx";
+          link.click();
+        } else {
+          alert("select file type to be downloaded");
+        }
       });
+
+      // submit btn functionality like filter all data
       submit.addEventListener("click", function () {
         getgendervalue = Array.from(gender.selectedOptions).map(
           (gender) => gender.value
@@ -409,13 +473,9 @@
         );
         getmeritvalue = merit.value;
         getconditioninmerit = conditioninmerit.value;
-
-        console.log(getgendervalue);
         clearTable();
         modify_data();
-
         printtable();
-
         console.log(newarray);
         console.log(oldarray);
       });
