@@ -67,6 +67,14 @@
       <button id="submit">Filter</button>
       <button id="duplicate">duplicate</button>
       <button id="sorting">sorting</button>
+      <br /><br />
+
+      <select name="meritsortingtype" id="meritsortingtype" multiple>
+        <option value="">Select</option>
+        <option value="ascending">ascending order</option>
+        <option value="descending">descending order</option>
+      </select>
+      <button id="sortingonmerit">sort in merit</button>
     </div>
     <table border="1px">
       <thead>
@@ -89,6 +97,7 @@
       const submit = document.getElementById("submit");
       const duplicate = document.getElementById("duplicate");
       const sorting = document.getElementById("sorting");
+      const sortingonmerit = document.getElementById("sortingonmerit");
       const all = document.getElementById("all");
 
       const meritfilter = document.getElementById("meritfilter");
@@ -96,6 +105,7 @@
       const studentfilter = document.getElementById("studentfilter");
 
       var getallvalue = "All";
+      var getmeritsortvalue = "All";
       var getgendervalue = [];
       var getyearvalue = [];
       var getdepartmentvalue = [];
@@ -138,13 +148,10 @@
               if (duplicatebol) {
                 duplicatesnumber = arrayforphonenumber.filter(
                   (number, index, array) => {
-                    // Check if the number appears two or more times
                     return array.filter((num) => num === number).length >= 2;
                   }
                 );
               }
-              // console.log("duplicatesnumber",duplicatesnumber);
-              // console.log("arrayforphonenumber",arrayforphonenumber);
 
               if (
                 (getgendervalue.length === 0 || getgendervalue.includes("")
@@ -232,14 +239,9 @@
 
       const printtable = () => {
         arrayforphonenumber = [];
-        newarray.sorting(newarray.contact_number);
-        console.log(newarray)
-        
-        newarray.forEach((student) => {
-          
 
+        newarray.forEach((student) => {
           arrayforphonenumber.push(student.contact_number);
-         
           const row = document.createElement("tr");
           const cell5 = document.createElement("td");
           cell5.textContent = student.id;
@@ -292,14 +294,37 @@
         duplicatebol = false;
       });
       sorting.addEventListener("click", function () {
-        duplicatebol = true;
         clearTable();
         modify_data();
-
+        newarray.sort((a, b) => a.contact_number - b.contact_number);
         printtable();
         console.log(newarray);
         console.log(oldarray);
-        duplicatebol = false;
+      });
+      sortingonmerit.addEventListener("click", function () {
+        getmeritsortvalue = Array.from(meritsortingtype.selectedOptions).map(
+          (meritsortingtype) => meritsortingtype.value
+        );
+        console.log(getmeritsortvalue);
+
+        clearTable();
+        modify_data();
+        // newarray.sort((a, b) => a.contact_number - b.contact_number);
+        // getmeritsortvalue?
+        getmeritsortvalue
+          ? getmeritsortvalue.includes("ascending")
+            ? newarray.sort((a, b) => a.merit_12th - b.merit_12th)
+            : true
+          : true;
+
+        getmeritsortvalue
+          ? getmeritsortvalue.includes("descending")
+            ? newarray.sort((a, b) => b.merit_12th - a.merit_12th)
+            : true
+          : true;
+        printtable();
+        console.log(newarray);
+        console.log(oldarray);
       });
       submit.addEventListener("click", function () {
         getgendervalue = Array.from(gender.selectedOptions).map(
