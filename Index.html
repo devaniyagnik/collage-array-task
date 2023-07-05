@@ -4,7 +4,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Table</title>
-    <script src="Api.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css"
+      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+      crossorigin="anonymous"
+    />
+    <script src="./js/Api.js"></script>
     <style>
       * {
         margin: 0;
@@ -20,83 +26,89 @@
     </style>
   </head>
   <body>
-    <div class="form">
-      <select name="gender" id="gender" multiple>
-        <option value="">Select</option>
-        <option value="Male">Male</option>
-        <option value="Female">Female</option>
-      </select>
-      <select name="department" id="department" multiple>
-        <option value="">Select</option>
-        <option value="Computer">Computer</option>
-        <option value="Automobile">Automobile</option>
-        <option value="Civil">Civil</option>
-      </select>
-      <select name="year" id="year" multiple>
-        <option value="">Select</option>
-        <option value="First">First</option>
-        <option value="Second">Second</option>
-        <option value="Third">Third</option>
-        <option value="Fourth">Fourth</option>
-        <option value="Pass Out">Pass Out</option>
-      </select>
+    <div class="fluid-container">
+      <div class="form">
+        <select name="gender" id="gender" multiple>
+          <option value="">Select</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+        </select>
+        <select name="department" id="department" multiple>
+          <option value="">Select</option>
+          <option value="Computer">Computer</option>
+          <option value="Automobile">Automobile</option>
+          <option value="Civil">Civil</option>
+        </select>
+        <select name="year" id="year" multiple>
+          <option value="">Select</option>
+          <option value="First">First</option>
+          <option value="Second">Second</option>
+          <option value="Third">Third</option>
+          <option value="Fourth">Fourth</option>
+          <option value="Pass Out">Pass Out</option>
+        </select>
 
-      <br /><br />
-      <input
-        type="number"
-        name="merit"
-        id="merit"
-        min="0"
-        max="99"
-        placeholder="merit"
-        required
-      />
-      <select name="conditioninmerit" id="conditioninmerit">
-        <option value="">Select</option>
-        <option value="lessthan">less than</option>
-        <option value="greaterthan">greater than</option>
-      </select>
+        <br /><br />
+        <input
+          type="number"
+          name="merit"
+          id="merit"
+          min="0"
+          max="99"
+          placeholder="merit"
+          required
+        />
+        <select name="conditioninmerit" id="conditioninmerit">
+          <option value="">Select</option>
+          <option value="lessthan">less than</option>
+          <option value="greaterthan">greater than</option>
+        </select>
 
-      <br /><br />
-      <select name="studenttype" id="studenttype" multiple>
-        <option value="">Select</option>
-        <option value="merit_12th">Regular</option>
-        <option value="merit_diploma">D2D</option>
-      </select>
+        <br /><br />
+        <select name="studenttype" id="studenttype" multiple>
+          <option value="">Select</option>
+          <option value="merit_12th">Regular</option>
+          <option value="merit_diploma">D2D</option>
+        </select>
 
-      <button id="submit">Filter</button>
-      <button id="duplicate">duplicate</button>
-      <button id="sorting">sorting</button>
-      <br /><br />
+        <button id="submit">Filter</button>
+        <button id="duplicate">duplicate</button>
+        <button id="sorting">sorting</button>
+        <br /><br />
 
-      <select name="meritsortingtype" id="meritsortingtype" multiple>
-        <option value="">Select</option>
-        <option value="ascending">ascending order</option>
-        <option value="descending">descending order</option>
-      </select>
-      <button id="sortingonmerit">sort in merit</button>
+        <select name="meritsortingtype" id="meritsortingtype" multiple>
+          <option value="">Select</option>
+          <option value="ascending">ascending order</option>
+          <option value="descending">descending order</option>
+        </select>
+        <button id="sortingonmerit">sort in merit</button>
+        <button id="reset">reset</button>
+        <button id="download">Download</button>
+      </div>
+      <table border="1px">
+        <thead>
+          <th>id</th>
+          <th>student_name</th>
+          <th>gender</th>
+          <th>contact_number</th>
+          <th>email_id</th>
+          <th>admission_year</th>
+          <th>merit_12th</th>
+          <th>year</th>
+          <th>department</th>
+          <th>dep_head</th>
+          <th>year_head</th>
+        </thead>
+        <tbody id="myTablebody"></tbody>
+      </table>
     </div>
-    <table border="1px">
-      <thead>
-        <th>id</th>
-        <th>student_name</th>
-        <th>gender</th>
-        <th>contact_number</th>
-        <th>email_id</th>
-        <th>admission_year</th>
-        <th>merit_12th</th>
-        <th>year</th>
-        <th>department</th>
-        <th>dep_head</th>
-        <th>year_head</th>
-      </thead>
-      <tbody id="myTablebody"></tbody>
-    </table>
 
     <script>
       const submit = document.getElementById("submit");
       const duplicate = document.getElementById("duplicate");
+      const download = document.getElementById("download");
       const sorting = document.getElementById("sorting");
+      const reset = document.getElementById("reset");
       const sortingonmerit = document.getElementById("sortingonmerit");
       const all = document.getElementById("all");
 
@@ -106,6 +118,7 @@
 
       var getallvalue = "All";
       var getmeritsortvalue = "All";
+      var resetbul = "";
       var getgendervalue = [];
       var getyearvalue = [];
       var getdepartmentvalue = [];
@@ -129,7 +142,6 @@
       const modify_data = () => {
         newarray.splice(0, newarray.length);
         oldarray.splice(0, oldarray.length);
-        // duplicatesnumber.splice(0, duplicatesnumber.length);
 
         const tableRows = data.department_data.forEach((departmentitem) => {
           const dep_head = departmentitem.dep_head;
@@ -293,13 +305,38 @@
         console.log(oldarray);
         duplicatebol = false;
       });
+
+      reset.addEventListener("click", function () {
+        getallvalue = "All";
+        getmeritsortvalue = "All";
+        resetbul = "";
+        getgendervalue = [];
+        getyearvalue = [];
+        getdepartmentvalue = [];
+        getmeritvalue = [];
+        getconditioninmerit = [];
+        getstudenttype = [];
+        arrayforphonenumber = [];
+        duplicatebol = false;
+        gender.value = gender.defaultSelected;
+        department.value = department.defaultSelected;
+        year.value = year.defaultSelected;
+        merit.value = merit.defaultSelected;
+        studenttype.value = studenttype.defaultSelected;
+        conditioninmerit.value = conditioninmerit.defaultSelected;
+        clearTable();
+        modify_data();
+        printtable();
+      });
       sorting.addEventListener("click", function () {
+        duplicatebol = true;
         clearTable();
         modify_data();
         newarray.sort((a, b) => a.contact_number - b.contact_number);
         printtable();
         console.log(newarray);
         console.log(oldarray);
+        duplicatebol = false;
       });
       sortingonmerit.addEventListener("click", function () {
         getmeritsortvalue = Array.from(meritsortingtype.selectedOptions).map(
@@ -309,8 +346,7 @@
 
         clearTable();
         modify_data();
-        // newarray.sort((a, b) => a.contact_number - b.contact_number);
-        // getmeritsortvalue?
+
         getmeritsortvalue
           ? getmeritsortvalue.includes("ascending")
             ? newarray.sort((a, b) => a.merit_12th - b.merit_12th)
@@ -325,6 +361,37 @@
         printtable();
         console.log(newarray);
         console.log(oldarray);
+      });
+      download.addEventListener("click", function () {
+        //define the heading for each row of the data
+        var csv =
+          "id,	student_name,	gender,	contact_number,	email_id,	admission_year,	merit_12th,	year,	department,	dep_head,	year_head\n"; // Add column headers
+
+        //merge the data with CSV
+        newarray.forEach(function (row) {
+          csv += row.id + ",";
+          csv += row.student_name + ",";
+          csv += row.gender + ",";
+          csv += row.contact_number + ",";
+          csv += row.email_id + ",";
+          csv += row.admission_year + ",";
+          csv += row.merit_12th + ",";
+          csv += row.year + ",";
+          csv += row.department + ",";
+          csv += row.dep_head + ",";
+          csv += row.year_head + "\n";
+        });
+
+        //display the created CSV data on the web browser
+        console.log(csv);
+
+        var hiddenElement = document.createElement("a");
+        hiddenElement.href = "data:text/csv;charset=utf-8," + encodeURI(csv);
+        hiddenElement.target = "_blank";
+
+        //provide the name for the CSV file to be downloaded
+        hiddenElement.download = "Filterdata.csv";
+        hiddenElement.click();
       });
       submit.addEventListener("click", function () {
         getgendervalue = Array.from(gender.selectedOptions).map(
@@ -347,6 +414,7 @@
         modify_data();
 
         printtable();
+
         console.log(newarray);
         console.log(oldarray);
       });

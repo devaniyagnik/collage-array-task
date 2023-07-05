@@ -1124,13 +1124,12 @@ data.department_data.map((departmentitem) => {
       if (Object.keys(students).some((e) => e.includes("merit_12th"))) {
        
         arraylistofmerit12th.push(
-          parseInt(students.id.charAt(students.id.length - 1))
+          parseInt(students.id.charAt(students.id.length -1))
         );
         if (!students.id) {
           // arraylistofmerit12th.forEach((e) => {});
           // console.log(arraylistofmerit12th);
           
-          for (var j = 0; j < arraylistofmerit12th.length; j++) {
             for (var i = 1; i <= arraylistofmerit12th.length+1; i++) {
               if (!arraylistofmerit12th.includes(i)) {
                 students.id = `${students.admission_year}_${i}`;
@@ -1138,9 +1137,7 @@ data.department_data.map((departmentitem) => {
                 arraylistofmerit12th[nanIndex] = i; 
                 // console.log(arraylistofmerit12th);
               }
-              //  arraylistofmerit12th.push(i);
             }
-          }
         }
       } else if (
         Object.keys(students).some((e) => e.includes("merit_diploma"))
@@ -1160,5 +1157,3 @@ data.department_data.map((departmentitem) => {
   });
 });
 
-// console.log(arraylistofmerit12th);
-// console.log(arraylistofmeritdiploma);
