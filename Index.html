@@ -66,6 +66,7 @@
 
       <button id="submit">Filter</button>
       <button id="duplicate">duplicate</button>
+      <button id="sorting">sorting</button>
     </div>
     <table border="1px">
       <thead>
@@ -87,6 +88,7 @@
     <script>
       const submit = document.getElementById("submit");
       const duplicate = document.getElementById("duplicate");
+      const sorting = document.getElementById("sorting");
       const all = document.getElementById("all");
 
       const meritfilter = document.getElementById("meritfilter");
@@ -118,7 +120,6 @@
         newarray.splice(0, newarray.length);
         oldarray.splice(0, oldarray.length);
         // duplicatesnumber.splice(0, duplicatesnumber.length);
-     
 
         const tableRows = data.department_data.forEach((departmentitem) => {
           const dep_head = departmentitem.dep_head;
@@ -134,7 +135,6 @@
             const year_head = years.year_head;
 
             years.student_data.forEach((student) => {
-              
               if (duplicatebol) {
                 duplicatesnumber = arrayforphonenumber.filter(
                   (number, index, array) => {
@@ -231,8 +231,14 @@
 
       const printtable = () => {
         arrayforphonenumber = [];
+        newarray.sorting(newarray.contact_number);
+        console.log(newarray)
+        
         newarray.forEach((student) => {
+          
+
           arrayforphonenumber.push(student.contact_number);
+         
           const row = document.createElement("tr");
           const cell5 = document.createElement("td");
           cell5.textContent = student.id;
@@ -275,6 +281,16 @@
       console.log(oldarray);
       printtable();
       duplicate.addEventListener("click", function () {
+        duplicatebol = true;
+        clearTable();
+        modify_data();
+
+        printtable();
+        console.log(newarray);
+        console.log(oldarray);
+        duplicatebol = false;
+      });
+      sorting.addEventListener("click", function () {
         duplicatebol = true;
         clearTable();
         modify_data();
