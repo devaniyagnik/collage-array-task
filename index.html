@@ -24,7 +24,7 @@
       table {
         width: 100%;
       }
-      button{
+      button {
         padding: 5px 10px;
       }
     </style>
@@ -51,6 +51,14 @@
           <option value="Third">Third</option>
           <option value="Fourth">Fourth</option>
           <option value="Pass Out">Pass Out</option>
+        </select>
+        <select name="yearnumber" id="yearnumber" multiple>
+          <option value="">Select</option>
+          <option value="2022">2022</option>
+          <option value="2021">2021</option>
+          <option value="2020">2020</option>
+          <option value="2019">2019</option>
+          <option value="2018">2018</option>
         </select>
         <!-- Input and select elements for filtering conditions -->
         <input
@@ -134,6 +142,7 @@
       // decarations of variables for actions
       var getallvalue = "All";
       var getmeritsortvalue = "All";
+      var getyearnumber = [];
       var resetbul = "";
       var getgendervalue = [];
       var getyearvalue = [];
@@ -189,6 +198,9 @@
                 (getgendervalue.length === 0 || getgendervalue.includes("")
                   ? true
                   : getgendervalue.includes(student.gender)) &&
+                  (getyearnumber.length === 0 || getyearnumber.includes("")
+                  ? true
+                  : getyearnumber.includes(student.admission_year)) &&
                 (getdepartmentvalue.length === 0 ||
                 getdepartmentvalue.includes("")
                   ? true
@@ -337,6 +349,7 @@
         getmeritsortvalue = "All";
         resetbul = "";
         getgendervalue = [];
+        getyearnumber = [];
         getyearvalue = [];
         getdepartmentvalue = [];
         getmeritvalue = [];
@@ -468,9 +481,14 @@
         getyearvalue = Array.from(year.selectedOptions).map(
           (year) => year.value
         );
+        
         getstudenttype = Array.from(studenttype.selectedOptions).map(
           (studenttype) => studenttype.value
         );
+        getyearnumber = Array.from(yearnumber.selectedOptions).map(
+          (yearnumber) => yearnumber.value
+        );
+        console.log(getyearnumber);
         getmeritvalue = merit.value;
         getconditioninmerit = conditioninmerit.value;
         clearTable();
