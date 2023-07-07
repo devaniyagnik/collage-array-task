@@ -1112,45 +1112,88 @@ let data = {
 };
 
 // add unique id all fields
-data.department_data.map((departmentitem) => {
-  const dep_head = departmentitem.dep_head;
-  const department = departmentitem.department;
 
-  departmentitem.year.forEach((years) => {
-    var arraylistofmerit12th = [];
-    var arraylistofmeritdiploma = [];
-    const year = years.year;
-    const year_head = years.year_head;
-    years.student_data.forEach((students) => {
-      if (Object.keys(students).some((e) => e.includes("merit_12th"))) {
-        arraylistofmerit12th.push(
-          parseInt(students.id.charAt(students.id.length - 1))
-        );
-        if (!students.id) {
-          for (var i = 1; i <= arraylistofmerit12th.length + 1; i++) {
-            if (!arraylistofmerit12th.includes(i)) {
-              students.id = `${students.admission_year}_${i}`;
-              let nanIndex = arraylistofmerit12th.findIndex((value) =>
-                isNaN(value)
-              );
-              arraylistofmerit12th[nanIndex] = i;
-            }
-          }
-        }
-      } else if (
-        Object.keys(students).some((e) => e.includes("merit_diploma"))
-      ) {
-        arraylistofmeritdiploma.push(students.id);
-        if (!students.id) {
-          for (var j = 0; j < arraylistofmeritdiploma.length; j++) {
-            for (var i = 1; i <= arraylistofmeritdiploma.length; i++) {
-              if (arraylistofmeritdiploma[j] != i) {
-                students.id = `2022_0_${i}`;
-              }
-            }
-          }
-        }
-      }
-    });
-  });
-});
+// data.department_data.map((departmentitem) => {
+//   const dep_head = departmentitem.dep_head;
+//   const department = departmentitem.department;
+
+//   departmentitem.year.forEach((years) => {
+//     var arraylistofmerit12th = [];
+//     var arraylistofmeritdiploma = [];
+//     const year = years.year;
+//     const year_head = years.year_head;
+//     years.student_data.forEach((students) => {
+//       if (Object.keys(students).some((e) => e.includes("merit_12th"))) {
+//         arraylistofmerit12th.push(
+//           parseInt(students.id.charAt(students.id.length - 1))
+//         );
+//         if (!students.id) {
+//           for (var i = 1; i <= arraylistofmerit12th.length + 1; i++) {
+//             if (!arraylistofmerit12th.includes(i)) {
+//               students.id = `${students.admission_year}_${i}`;
+//               let nanIndex = arraylistofmerit12th.findIndex((value) =>
+//                 isNaN(value)
+//               );
+//               arraylistofmerit12th[nanIndex] = i;
+//             }
+//           }
+//         }
+//       } else if (
+//         Object.keys(students).some((e) => e.includes("merit_diploma"))
+//       ) {
+//         arraylistofmeritdiploma.push(students.id);
+//         if (!students.id) {
+//           for (var j = 0; j < arraylistofmeritdiploma.length; j++) {
+//             for (var i = 1; i <= arraylistofmeritdiploma.length; i++) {
+//               if (arraylistofmeritdiploma[j] != i) {
+//                 students.id = `${students.admission_year}_0_${i}`;
+//               }
+//             }
+//           }
+//         }
+//       }
+//     });
+//   });
+// });
+
+// function fillData(){
+  // data.department_data.forEach((department,dindex) => {
+  //   department.year.forEach((year,yindex) => {
+  //     year.student_data.forEach((student,sindex) => {
+  //       var checkRegId = `${student.admission_year}_${sindex+1}`;
+  //       var checkD2dId = `${student.admission_year}_0_${sindex+1}`;
+  //       // Generates Empty Regular Email & Id
+  //       if(data.department_data[dindex].year[yindex].student_data.some((item)=> item.id == checkRegId)){
+  //         if(student.id == '' && student.merit_12th && student.email_id == ''){
+  //           student.id = `${student.admission_year}_${sindex+5}`;
+  //           student.email_id = `${student.student_name}_${student.id}@gmail.com`;
+  //           student.missingdata = true;
+  //         }
+  //       }
+  //       else{
+  //         if(student.id == '' && student.merit_12th && student.email_id == ''){
+  //           student.id = `${student.admission_year}_${sindex+1}`;
+  //           student.email_id = `${student.student_name}_${student.id}@gmail.com`;
+  //           student.missingdata = true;
+  //         }
+  //       }
+  //       // Generates Empty D2D Email & Id
+  //       if(data.department_data[dindex].year[yindex].student_data.some((item)=> item.id == checkD2dId)){
+  //         if(student.id == '' && student.merit_diploma && student.email_id == ''){
+  //           student.id = `${student.admission_year}_0_${sindex+5}`;
+  //           student.email_id = `${student.student_name}_${student.id}@gmail.com`;
+  //           student.missingdata = true;
+  //         }
+  //       }
+  //       else{
+  //         if(student.id == '' && student.merit_diploma && student.email_id == ''){
+  //           student.id = `${student.admission_year}_0_${sindex+1}`;
+  //           student.email_id = `${student.student_name}_${student.id}@gmail.com`;
+  //           student.missingdata = true;
+  //         }
+  //       }
+  //     });
+  //   });
+  // });
+  // filterData();
+// }

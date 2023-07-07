@@ -86,6 +86,7 @@
         <button id="submit">Filter</button>
         <button id="duplicate">duplicate</button>
         <button id="sorting">sorting</button>
+        <button id="fillid">fill Id & Email</button>
         <br /><br />
 
         <!-- Select element for sorting options -->
@@ -130,6 +131,7 @@
       const submit = document.getElementById("submit");
       const duplicate = document.getElementById("duplicate");
       const download = document.getElementById("download");
+      const fillid = document.getElementById("fillid");
       const sorting = document.getElementById("sorting");
       const reset = document.getElementById("reset");
       const sortingonmerit = document.getElementById("sortingonmerit");
@@ -152,6 +154,7 @@
       var getstudenttype = [];
       var arrayforphonenumber = [];
       var duplicatebol = false;
+      var fillidbul = false;
       var newarray = [];
       var oldarray = [data.department_data];
       let duplicatesnumber = [];
@@ -174,6 +177,8 @@
           const department = departmentitem.department;
 
           departmentitem.year?.forEach((years) => {
+            var arraylistofmerit12th = [];
+            var arraylistofmeritdiploma = [];
             // get year data store in variable
             const yearData = {
               year: years.year,
@@ -193,12 +198,52 @@
                 );
               }
 
+              if (fillidbul) {
+                if (
+                  Object.keys(student).some((e) => e.includes("merit_12th"))
+                ) {
+                  arraylistofmerit12th.push(
+                    parseInt(student.id.charAt(student.id.length - 1))
+                  );
+                  if (!student.id) {
+                    for (var i = 1; i <= arraylistofmerit12th.length + 1; i++) {
+                      if (!arraylistofmerit12th.includes(i)) {
+                        student.id = `${student.admission_year}_${i}`;
+                        let nanIndex = arraylistofmerit12th.findIndex((value) =>
+                          isNaN(value)
+                        );
+                        arraylistofmerit12th[nanIndex] = i;
+                      }
+                    }
+                  }
+                } else if (
+                  Object.keys(student).some((e) => e.includes("merit_diploma"))
+                ) {
+                  arraylistofmeritdiploma.push(student.id);
+                  if (!student.id) {
+                    for (var j = 0; j < arraylistofmeritdiploma.length; j++) {
+                      for (
+                        var i = 1;
+                        i <= arraylistofmeritdiploma.length;
+                        i++
+                      ) {
+                        if (arraylistofmeritdiploma[j] != i) {
+                          student.id = `${student.admission_year}_0_${i}`;
+                        }
+                      }
+                    }
+                  }
+                }
+                if (student.email_id === "") {
+                  student.email_id = `${student.student_name}_${student.id}@gmail.com`;
+                }
+              }
               //all conditions for get data filter and duplicate
-              if (
+               if (
                 (getgendervalue.length === 0 || getgendervalue.includes("")
                   ? true
                   : getgendervalue.includes(student.gender)) &&
-                  (getyearnumber.length === 0 || getyearnumber.includes("")
+                (getyearnumber.length === 0 || getyearnumber.includes("")
                   ? true
                   : getyearnumber.includes(student.admission_year)) &&
                 (getdepartmentvalue.length === 0 ||
@@ -349,7 +394,7 @@
         getmeritsortvalue = "All";
         resetbul = "";
         getgendervalue = [];
-        getyearnumber =[];
+        getyearnumber = [];
         getyearnumber = [];
         getyearvalue = [];
         getdepartmentvalue = [];
@@ -365,8 +410,9 @@
         merit.value = merit.defaultSelected;
         studenttype.value = studenttype.defaultSelected;
         conditioninmerit.value = "lessthan";
-        clearTable();
+        fillidbul = false;
         modify_data();
+        clearTable();
         printtable();
       });
       // sorting btn functionality like sorting on contact number
@@ -473,6 +519,15 @@
       });
 
       // submit btn functionality like filter all data
+      fillid.addEventListener("click", function () {
+        fillidbul = true;
+
+        modify_data();
+        clearTable();
+        printtable();
+
+        fillidbul = false;
+      });
       submit.addEventListener("click", function () {
         getgendervalue = Array.from(gender.selectedOptions).map(
           (gender) => gender.value
@@ -483,7 +538,7 @@
         getyearvalue = Array.from(year.selectedOptions).map(
           (year) => year.value
         );
-        
+
         getstudenttype = Array.from(studenttype.selectedOptions).map(
           (studenttype) => studenttype.value
         );
